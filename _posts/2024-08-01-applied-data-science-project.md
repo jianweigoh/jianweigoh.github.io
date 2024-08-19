@@ -67,23 +67,80 @@ Additional feature engineering
 - Content rating was binned to reduce the number of dimensions, and consolidate similar age band rating
 - Year of movie release was also binned into 3 separate bins, each with equal size
 
-Features that will not be used for modelling are dropped at this point
+Features that will not be used for modelling were dropped at this point
 
-### Modelling
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce bibendum neque eget nunc mattis eu sollicitudin enim tincidunt. Vestibulum lacus tortor, ultricies id dignissim ac, bibendum in velit. Proin convallis mi ac felis pharetra aliquam. Curabitur dignissim accumsan rutrum. In arcu magna, aliquet vel pretium et, molestie et arcu. Mauris lobortis nulla et felis ullamcorper bibendum. Phasellus et hendrerit mauris. Proin eget nibh a massa vestibulum pretium. Suspendisse eu nisl a ante aliquet bibendum quis a nunc. Praesent varius interdum vehicula. Aenean risus libero, placerat at vestibulum eget, ultricies eu enim. Praesent nulla tortor, malesuada adipiscing adipiscing sollicitudin, adipiscing eget est.
+### Modelling - Regression
+Prior to modelling, min-max normalisation of the target variable (imdb_votes) was performed due to the large range (5 - 2,268,288). Train test split using a 70:30 ratio was used.
 
-### Evaluation
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce bibendum neque eget nunc mattis eu sollicitudin enim tincidunt. Vestibulum lacus tortor, ultricies id dignissim ac, bibendum in velit. Proin convallis mi ac felis pharetra aliquam. Curabitur dignissim accumsan rutrum. In arcu magna, aliquet vel pretium et, molestie et arcu. Mauris lobortis nulla et felis ullamcorper bibendum. Phasellus et hendrerit mauris. Proin eget nibh a massa vestibulum pretium. Suspendisse eu nisl a ante aliquet bibendum quis a nunc. Praesent varius interdum vehicula. Aenean risus libero, placerat at vestibulum eget, ultricies eu enim. Praesent nulla tortor, malesuada adipiscing adipiscing sollicitudin, adipiscing eget est.
+For regression modelling, the following models were used, and their respective mean square error (MSE) and coefficient of determination (R^2) ws obtained as per tables below:
+
+| Model           | MSE      | R2       |
+| --------------- | -------- | -------- |
+| Linear Regression | 0.0012   | 0.1432   |
+| Random Forest   | 0.0012   | 0.1471   |
+| Deep Learning   | 0.0039   | -1.7884  |
+
+To reduce the effect of possible noise in the regression models, feature selection through the following methods were performed, along with their corresponding metrics:
+
+| Feature Selection Method                   | MSE      | R2       |
+| ------------------------------------------ | -------- | -------- |
+| SelectKBest with f_regression              | 0.0012   | 0.1408   |
+| Recursive Feature Elimination (RFE)        | 0.0013   | 0.0761   |
+| Lasso Regression for Feature Selection     | 0.0013   | 0.0479   |
+| Feature Importance Random Forest (RF)      | 0.0012   | 0.1446   |
+
+### Evaluation - Regression
+Results from the regression modelling is unfortunately poor, as observed from the dismal R^2 score. It is unlikely for hyper parameter tuning to change the performance significantly. At this point, binary classification modelling is considered, with outcomes being representative of 'having a good number of imdb votes' and 'having a poor number of imdb votes'
+
+### Modelling - Classification
+Preliminarily, the threshold was determined based on the median imdb_vote count, which arrived 2471. However, in light of encouraging evaluation metrics in the inital modelling runs, the threshold was set at 100000, which represents a more meaningful number of imdb_vote count to reflect a more well discussed movie/show.
+
+| Model                        | Accuracy | Precision | Recall   |
+| ---------------------------- | -------- | --------- | -------- |
+| K-Neighbors Classifier (KNN)  | 0.9403   | 0.9209    | 0.9403   |
+| Support Vector Classifier (SVM) | 0.9423   | 0.8891    | 0.9423   |
+| Logistic Regression (LR)     | 0.9403   | 0.9259    | 0.9403   |
+| Decision Tree (DT)           | 0.9259   | 0.9247    | 0.9259   |
+| Gaussian Naive Bayes (GNB)   | 0.6328   | 0.9437    | 0.6328   |
+| Random Forest (RF)           | 0.9469   | 0.9351    | 0.9469   |
+| Gradient Boosting (GB)       | 0.9436   | 0.9324    | 0.9436   |
+
+In light of the high performing metric, propose to check the features to see if there are any input variables that are heavily influencing the results. A feature importance chart was generated to study the aforementioned.
+
+![image](https://github.com/user-attachments/assets/4a44a4e4-d410-401b-9935-0083bed29914)
+
+Based on the results of the feature importance chart, propose to remove the following variables:
+- runtime_combinted: to investigate if this input is heavily influencing the model
+- Summarised_year_Old, Summarised_year_Modern, and Summarised_year_New: possibility that longer the movie has been released, the more time it has to accumulate votes
+
+Following the feature selection, the same classification models were trained again, yielding the following results and feature importance chart
+
+| Model                        | Accuracy | Precision | Recall   |
+| ---------------------------- | -------- | --------- | -------- |
+| K-Neighbors Classifier (KNN)  | 0.9351   | 0.9133    | 0.9351   |
+| Support Vector Classifier (SVM) | 0.9430   | 0.8892    | 0.9430   |
+| Logistic Regression (LR)     | 0.9397   | 0.9062    | 0.9397   |
+| Decision Tree (DT)           | 0.9279   | 0.9150    | 0.9279   |
+| Gaussian Naive Bayes (GNB)   | 0.5521   | 0.9429    | 0.5521   |
+| Random Forest (RF)           | 0.9338   | 0.9145    | 0.9338   |
+| Gradient Boosting (GB)       | 0.9397   | 0.9108    | 0.9397   |
+
+![image](https://github.com/user-attachments/assets/7180019b-9a4f-4aeb-8b49-acbd76e395b0)
+
+
+### Evaluation - Classification
+Unlike regression modelling, the results from the classification modelling had been very encouraging. High accuracy, precision and recall (>90%) across the board (with the exception of GNB model) indicates that this model will be fairly reliable in the prediction of whether a film will engage a large number of audience, defined by having more than 100000 votes on imdb. These results far exceed the prescribed 60% accuracy rate for success of the business objective.
 
 ## Recommendation and Analysis
-Explain the analysis and recommendations
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce bibendum neque eget nunc mattis eu sollicitudin enim tincidunt. Vestibulum lacus tortor, ultricies id dignissim ac, bibendum in velit. Proin convallis mi ac felis pharetra aliquam. Curabitur dignissim accumsan rutrum. In arcu magna, aliquet vel pretium et, molestie et arcu. Mauris lobortis nulla et felis ullamcorper bibendum. Phasellus et hendrerit mauris. Proin eget nibh a massa vestibulum pretium. Suspendisse eu nisl a ante aliquet bibendum quis a nunc. Praesent varius interdum vehicula. Aenean risus libero, placerat at vestibulum eget, ultricies eu enim. Praesent nulla tortor, malesuada adipiscing adipiscing sollicitudin, adipiscing eget est.
+We propose that producers can consider using our classification model(s) to predict whether a propsective film in consideration will capture the attention of a large audience. That being said, the following considerations and areas of improvement needs to be considered.
+- To monitor for model drift, as audience preferences and trends may change over time
+- As the identity of the movie is clear, to consider obtaining other sources of information e.g. lead actors / production team / movie budget and integrating with existing dataset, to improve the robustness of the model
+- Consider further feature selection to create a more parsimonious model
 
 ## AI Ethics
-Discuss the potential data science ethics issues (privacy, fairness, accuracy, accountability, transparency) in your project. 
+No personal and confidential information was included in the dataset. Failure of the models ability to accurately prediction of movie/show success is not expected to bring about harm to society, albeit at the cost of the production company. That being said, propose that for the use of this classifcation model, a human-in-the-loop arrangement should be considered, not in view of safety, but rather, there are other considerations when it comes to the creation of a film/show which cannot be sufficiently simplified with machine learning alone. Additional inputs needs to be collected from other sources to make a more informed and stratgic decision. This model should be intended for to support decision making, rather than to automate and draw conclusions on behalf of humans.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce bibendum neque eget nunc mattis eu sollicitudin enim tincidunt. Vestibulum lacus tortor, ultricies id dignissim ac, bibendum in velit. Proin convallis mi ac felis pharetra aliquam. Curabitur dignissim accumsan rutrum. In arcu magna, aliquet vel pretium et, molestie et arcu. Mauris lobortis nulla et felis ullamcorper bibendum. Phasellus et hendrerit mauris. Proin eget nibh a massa vestibulum pretium. Suspendisse eu nisl a ante aliquet bibendum quis a nunc. Praesent varius interdum vehicula. Aenean risus libero, placerat at vestibulum eget, ultricies eu enim. Praesent nulla tortor, malesuada adipiscing adipiscing sollicitudin, adipiscing eget est.
+![image](https://github.com/user-attachments/assets/04a88708-c0cc-4eb2-a4fd-1acb1dd3f54d)
 
 ## Source Codes and Datasets
 https://github.com/jianweigoh/ITD214_Assignment
