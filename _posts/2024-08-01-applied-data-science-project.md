@@ -15,6 +15,8 @@ Our business goal is to able to sustainably identify popular topics among audien
 3. Train a binary classification model to predict prospective films’ IMDB score and hence its potential popularity level
 4. Train a regression model to predict prospective films’ IMDB votes and hence its potential audience engagement level --> Train a binary classification model to predict the likely scale of prospective films’ IMDB votes, and hence its potential audience engagement level
 
+![image](https://github.com/user-attachments/assets/5239c401-e02a-43ec-9fbd-01153ae98821)
+
 Proposed success criterions are as follows:
 - To automate the classification of new movie reviews with a 80% accuracy
 - To identify at least 2 topics that are associated with positive sentiment
@@ -23,7 +25,26 @@ Proposed success criterions are as follows:
 This repository studies business objective #4
 
 ## Work Accomplished
-Document your work done to accomplish the outcome
+Business objective #4 studies the feasibility of creating regression and classification model to predict a film's imdb vote count, based on the dataset's features. Dataset obtained from https://www.kaggle.com/datasets/maso0dahmed/netflix-movies-and-shows was subjected to exploratory data analysis (EDA), data cleaning, data transformation, before performing modelling and evaluation. Details in the following sections.
+
+### Exploratory Data Analysis (EDA)
+EDA for this project was conducted in 4 broad strokes. 
+
+Firstly, basic pandas head and info methods were applied to visualise the dataset studied. 
+
+![image](https://github.com/user-attachments/assets/eec06086-a966-42cf-a7fd-f5df7b0335c5)
+
+Secondly, and EDA table function (adapted from https://www.kaggle.com/code/keishibata/netflix-movies-and-shows-eda-wordcloud) was applied to understand the number of missing, unique, and pandas describe method values across all the features in the dataset. 
+
+![image](https://github.com/user-attachments/assets/805f04dd-e725-426e-8b03-6f0c789494ba)
+
+Thirdly, the ydata_profiling library was used to generate quick histogram visualization of available features, and check for insights that might have been missed in earlier EDA steps.
+
+![ydatacharts](https://github.com/user-attachments/assets/75b0a0ba-6144-42d3-a384-a14cc87cd8a0)
+
+Lastly, additional visualisations were performed to supplement the histograms generated with ydata_profiling and for more focused data exploration of input and target variables
+
+![image](https://github.com/user-attachments/assets/30b6a220-2bd3-4a8f-ad2e-c96f0fddf46e)
 
 ### Data Preparation
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce bibendum neque eget nunc mattis eu sollicitudin enim tincidunt. Vestibulum lacus tortor, ultricies id dignissim ac, bibendum in velit. Proin convallis mi ac felis pharetra aliquam. Curabitur dignissim accumsan rutrum. In arcu magna, aliquet vel pretium et, molestie et arcu. Mauris lobortis nulla et felis ullamcorper bibendum. Phasellus et hendrerit mauris. Proin eget nibh a massa vestibulum pretium. Suspendisse eu nisl a ante aliquet bibendum quis a nunc. Praesent varius interdum vehicula. Aenean risus libero, placerat at vestibulum eget, ultricies eu enim. Praesent nulla tortor, malesuada adipiscing adipiscing sollicitudin, adipiscing eget est.
