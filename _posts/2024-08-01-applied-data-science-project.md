@@ -40,14 +40,34 @@ Secondly, and EDA table function (adapted from https://www.kaggle.com/code/keish
 
 Thirdly, the ydata_profiling library was used to generate quick histogram visualization of available features, and check for insights that might have been missed in earlier EDA steps.
 
-![ydatacharts](https://github.com/user-attachments/assets/75b0a0ba-6144-42d3-a384-a14cc87cd8a0)
+![ydatacharts](https://github.com/user-attachments/assets/58bb23ab-c478-4937-ac51-f4f99d13914b)
 
 Lastly, additional visualisations were performed to supplement the histograms generated with ydata_profiling and for more focused data exploration of input and target variables
 
 ![image](https://github.com/user-attachments/assets/30b6a220-2bd3-4a8f-ad2e-c96f0fddf46e)
 
 ### Data Preparation
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce bibendum neque eget nunc mattis eu sollicitudin enim tincidunt. Vestibulum lacus tortor, ultricies id dignissim ac, bibendum in velit. Proin convallis mi ac felis pharetra aliquam. Curabitur dignissim accumsan rutrum. In arcu magna, aliquet vel pretium et, molestie et arcu. Mauris lobortis nulla et felis ullamcorper bibendum. Phasellus et hendrerit mauris. Proin eget nibh a massa vestibulum pretium. Suspendisse eu nisl a ante aliquet bibendum quis a nunc. Praesent varius interdum vehicula. Aenean risus libero, placerat at vestibulum eget, ultricies eu enim. Praesent nulla tortor, malesuada adipiscing adipiscing sollicitudin, adipiscing eget est.
+Duplicate entries were removed based on title AND year of release. This is due to the nature of movies, whereby it is common to see remakes under the same movie title. Such movies should be treated as unique records during modelling. Records will NAN target variable values were also dropped.
+
+Next, we remove entries that do not make logical sense
+- Records without target variable
+- Records with runtime that is = 0
+
+The dataset on hand collects information of both movies and television shows. Compared to movies, shows have shorter runtime, but can be aired over multiple seasons / episodes. Hence, propose to consolidate runtime and seasons into a single feature ('runtime_combined'), to better reflect the total duration of the title.
+
+One hot encoding was also performed on categorical features
+- Type (Movie vs Show)
+- Genres
+- Production country
+- Content rating
+- Year of movie release
+
+Additional feature engineering
+- The first production country listed was mapped to its respective continent to reduce number of dimensions. All other production countries were discounted
+- Content rating was binned to reduce the number of dimensions, and consolidate similar age band rating
+- Year of movie release was also binned into 3 separate bins, each with equal size
+
+Features that will not be used for modelling are dropped at this point
 
 ### Modelling
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce bibendum neque eget nunc mattis eu sollicitudin enim tincidunt. Vestibulum lacus tortor, ultricies id dignissim ac, bibendum in velit. Proin convallis mi ac felis pharetra aliquam. Curabitur dignissim accumsan rutrum. In arcu magna, aliquet vel pretium et, molestie et arcu. Mauris lobortis nulla et felis ullamcorper bibendum. Phasellus et hendrerit mauris. Proin eget nibh a massa vestibulum pretium. Suspendisse eu nisl a ante aliquet bibendum quis a nunc. Praesent varius interdum vehicula. Aenean risus libero, placerat at vestibulum eget, ultricies eu enim. Praesent nulla tortor, malesuada adipiscing adipiscing sollicitudin, adipiscing eget est.
